@@ -2,26 +2,16 @@
 
 ```
 import pandas as pd
-import matplotlib.pyplot as plt
-netflix_df = pd.read_csv("netflix_data.csv", index_col=0)
-netflix_subset = netflix_df[netflix_df["type"] != "TV Show"]
-netflix_movies = netflix_subset.iloc[:, [1, 4, 6, 7, 9]]
-short_movies = netflix_movies[netflix_movies["duration"] < 60]
-color = []
-for x, y in netflix_movies.iterrows():  
-    if y["genre"] == "Children":
-        color.append("green")
-    elif y["genre"] == "Documentaries":
-        color.append("red")
-    elif y["genre"] == "Stand-Up":
-        color.append("yellow")
-    else:
-        color.append("blue")
-fig = plt.figure(figsize=(12,8))       
-plt.scatter(netflix_movies["release_year"], netflix_movies["duration"], c=color)  
-plt.xlabel("Release year")
-plt.ylabel("Duration (min)")
-plt.title("Movie Duration by Year of Release")
-plt.show()
+
+schools = pd.read_csv("schools.csv")
+
+schools.head()
+best_math_schools = schools[schools["average_math"] >= 640][["school_name", "average_math"]].sort_values("average_math", ascending=False)
+schools["total_SAT"] = schools["average_math"] + schools["average_reading"] + schools["average_writing"]
+top_10_schools = schools.sort_values("total_SAT", ascending=False)[["school_name", "total_SAT"]].head(10)
+boroughs = schools.groupby("borough")["total_SAT"].agg(["count", "mean", "std"]).round(2)
+largest_std_dev = boroughs[boroughs["std"] == boroughs["std"].max()]
+largest_std_dev = largest_std_dev.rename(columns={"count": "num_schools", "mean": "average_SAT", "std": "std_SAT"})
+print(largest_std_dev)
 ```
  
